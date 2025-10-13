@@ -10,6 +10,13 @@ const contactForm = document.querySelector('.contact-form');
 hamburger.addEventListener('click', () => {
     hamburger.classList.toggle('active');
     navMenu.classList.toggle('active');
+    
+    // Prevent body scroll when menu is open
+    if (navMenu.classList.contains('active')) {
+        document.body.style.overflow = 'hidden';
+    } else {
+        document.body.style.overflow = '';
+    }
 });
 
 // Close mobile menu when clicking on a link
@@ -17,7 +24,26 @@ navLinks.forEach(link => {
     link.addEventListener('click', () => {
         hamburger.classList.remove('active');
         navMenu.classList.remove('active');
+        document.body.style.overflow = '';
     });
+});
+
+// Close mobile menu when clicking outside
+document.addEventListener('click', (e) => {
+    if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) {
+        hamburger.classList.remove('active');
+        navMenu.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+});
+
+// Close mobile menu on escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && navMenu.classList.contains('active')) {
+        hamburger.classList.remove('active');
+        navMenu.classList.remove('active');
+        document.body.style.overflow = '';
+    }
 });
 
 // Header scroll effect
@@ -470,5 +496,143 @@ revealStyles.textContent = `
         opacity: 1 !important;
         transform: translateY(0) !important;
     }
+    
+    /* Mobile touch improvements */
+    @media (max-width: 768px) {
+        .btn {
+            min-height: 48px;
+            touch-action: manipulation;
+        }
+        
+        .service-card,
+        .testimonial-card,
+        .cert-card,
+        .portfolio-item {
+            touch-action: manipulation;
+        }
+        
+        .nav-menu a {
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            min-height: 48px;
+            touch-action: manipulation;
+        }
+        
+        .hamburger {
+            min-width: 48px;
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: manipulation;
+        }
+    }
+    
+    /* Prevent zoom on input focus on iOS */
+    @media screen and (-webkit-min-device-pixel-ratio: 0) {
+        select,
+        textarea,
+        input[type="text"],
+        input[type="password"],
+        input[type="datetime"],
+        input[type="datetime-local"],
+        input[type="date"],
+        input[type="month"],
+        input[type="time"],
+        input[type="week"],
+        input[type="number"],
+        input[type="email"],
+        input[type="url"],
+        input[type="search"],
+        input[type="tel"],
+        input[type="color"] {
+            font-size: 16px;
+        }
+    }
 `;
 document.head.appendChild(revealStyles);
+
+// Add mobile-specific interactions
+const addMobileInteractions = () => {
+    // Add touch feedback to cards
+    const interactiveElements = document.querySelectorAll('.service-card, .testimonial-card, .cert-card, .portfolio-item, .contact-item');
+    
+    interactiveElements.forEach(element => {
+        element.addEventListener('touchstart', () => {
+            element.style.transform = 'scale(0.98)';
+            element.style.transition = 'transform 0.1s ease';
+        });
+        
+        element.addEventListener('touchend', () => {
+            element.style.transform = '';
+            element.style.transition = 'transform 0.3s ease';
+        });
+    });
+    
+    // Add touch feedback to buttons
+    const buttons = document.querySelectorAll('.btn');
+    buttons.forEach(button => {
+        button.addEventListener('touchstart', () => {
+            button.style.transform = 'scale(0.95)';
+            button.style.transition = 'transform 0.1s ease';
+        });
+        
+        button.addEventListener('touchend', () => {
+            button.style.transform = '';
+            button.style.transition = 'transform 0.3s ease';
+        });
+    });
+    
+    // Improve form interactions on mobile
+    const formInputs = document.querySelectorAll('input, select, textarea');
+    formInputs.forEach(input => {
+        input.addEventListener('focus', () => {
+            // Scroll to input on mobile to prevent keyboard covering
+            if (window.innerWidth <= 768) {
+                setTimeout(() => {
+                    input.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center' 
+                    });
+                }, 300);
+            }
+        });
+    });
+};
+
+// Initialize mobile interactions
+addMobileInteractions();
+
+// Add swipe gesture for mobile menu (optional enhancement)
+let touchStartX = 0;
+let touchEndX = 0;
+
+document.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+});
+
+document.addEventListener('touchend', (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+});
+
+const handleSwipe = () => {
+    const swipeThreshold = 50;
+    const swipeDistance = touchEndX - touchStartX;
+    
+    if (Math.abs(swipeDistance) > swipeThreshold) {
+        if (swipeDistance > 0 && navMenu.classList.contains('active')) {
+            // Swipe right to close menu
+            hamburger.classList.remove('active');
+            navMenu.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    }
+};
