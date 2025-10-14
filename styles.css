@@ -55,6 +55,24 @@ body {
     margin: 0 auto;
 }
 
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.brand-icon {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.3));
+    transition: transform 0.3s ease;
+}
+
+.brand-icon:hover {
+    transform: scale(1.1) rotate(5deg);
+}
+
 .nav-brand h2 {
     background: var(--gradient-primary);
     -webkit-background-clip: text;
@@ -185,6 +203,29 @@ body {
     background-clip: text;
     margin-bottom: 1rem;
     line-height: 1.1;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.hero-icon {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.5));
+    animation: iconGlow 3s ease-in-out infinite;
+}
+
+@keyframes iconGlow {
+    0%, 100% { 
+        filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.5));
+        transform: scale(1);
+    }
+    50% { 
+        filter: drop-shadow(0 0 30px rgba(0, 212, 255, 0.8));
+        transform: scale(1.05);
+    }
 }
 
 .hero-text h2 {
@@ -930,6 +971,22 @@ body {
     background-clip: text;
     font-size: 1.5rem;
     margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.footer-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.4));
+    transition: transform 0.3s ease;
+}
+
+.footer-icon:hover {
+    transform: scale(1.1);
 }
 
 .footer-brand p {
@@ -1058,6 +1115,13 @@ body {
         font-size: 2.8rem;
         line-height: 1.2;
         margin-bottom: 1.5rem;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .hero-icon {
+        width: 50px;
+        height: 50px;
     }
     
     .hero-text h2 {
@@ -1213,6 +1277,11 @@ body {
         font-size: 1.5rem;
     }
     
+    .brand-icon {
+        width: 28px;
+        height: 28px;
+    }
+    
     .hero-content {
         padding: 1rem 0.5rem;
         gap: 2rem;
@@ -1221,6 +1290,23 @@ body {
     .hero-text h1 {
         font-size: 2.2rem;
         line-height: 1.1;
+        flex-direction: column;
+        gap: 0.3rem;
+    }
+    
+    .hero-icon {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .brand-icon {
+        width: 24px;
+        height: 24px;
+    }
+    
+    .footer-icon {
+        width: 20px;
+        height: 20px;
     }
     
     .hero-text h2 {
