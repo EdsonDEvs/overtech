@@ -74,7 +74,7 @@ const observer = new IntersectionObserver((entries) => {
 }, observerOptions);
 
 // Observe elements for animation
-const animatedElements = document.querySelectorAll('.service-card, .contact-item, .stat, .feature, .testimonial-card, .cert-card, .portfolio-item');
+const animatedElements = document.querySelectorAll('.service-card, .contact-item, .stat, .feature, .testimonial-card, .cert-card, .portfolio-item, .web-feature, .tech-item');
 animatedElements.forEach(el => {
     el.style.opacity = '0';
     el.style.transform = 'translateY(30px)';
@@ -461,6 +461,36 @@ window.addEventListener('load', () => {
         const originalText = heroBadge.textContent;
         typeWriterBadge(heroBadge, originalText, 100);
     }
+});
+
+// Portfolio tabs functionality
+const tabButtons = document.querySelectorAll('.tab-btn');
+const portfolioItems = document.querySelectorAll('.portfolio-item');
+
+tabButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        // Remove active class from all buttons
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        // Add active class to clicked button
+        button.classList.add('active');
+        
+        const filter = button.getAttribute('data-tab');
+        
+        portfolioItems.forEach(item => {
+            if (filter === 'all' || item.getAttribute('data-category') === filter) {
+                item.style.display = 'block';
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateY(0)';
+                }, 100);
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    });
 });
 
 // Add revealed class styles
