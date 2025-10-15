@@ -688,34 +688,13 @@
                     </div>
                     
                     <div class="form-group">
-                        <div class="captcha-container">
-                            <label for="captcha">Verificação de Segurança:</label>
-                            <div class="captcha-header">
-                                <span>Complete a verificação para continuar</span>
-                                <button type="button" id="refresh-captcha" class="refresh-btn">
-                                    <i class="fas fa-sync-alt"></i>
-                                    Nova Pergunta
-                                </button>
-                            </div>
-                            
-                            <div class="captcha-content">
-                                <div class="captcha-question" id="captcha-question">
-                                    <!-- Conteúdo será inserido via JavaScript -->
-                                </div>
-                                
-                                <div class="captcha-options" id="captcha-options">
-                                    <!-- Opções serão inseridas via JavaScript -->
-                                </div>
-                                
-                                <div class="captcha-input" id="captcha-input" style="display: none;">
-                                    <input type="text" id="captcha-answer" placeholder="Digite sua resposta" required>
-                                </div>
-                            </div>
-                            
-                            <div class="captcha-status" id="captcha-status">
+                        <div class="recaptcha-container">
+                            <label>Verificação de Segurança:</label>
+                            <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" data-theme="dark"></div>
+                            <p class="recaptcha-info">
                                 <i class="fas fa-shield-alt"></i>
-                                <span>Proteção contra bots ativa</span>
-                            </div>
+                                Proteção Google reCAPTCHA ativa
+                            </p>
                         </div>
                     </div>
                     
@@ -774,6 +753,8 @@
         </div>
     </footer>
 
+    <script src="recaptcha-config.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script src="script.js"></script>
 </body>
 </html>
