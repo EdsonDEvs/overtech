@@ -17,12 +17,12 @@ const EMAIL_CONFIG = {
     // Configurações do template
     TEMPLATE_PARAMS: {
         to_name: 'Edson Leandro',
-        from_name: '{{name}}',
-        from_email: '{{email}}',
+        from_name: '{{from_name}}',
+        from_email: '{{from_email}}',
         phone: '{{phone}}',
         service: '{{service}}',
         message: '{{message}}',
-        reply_to: '{{email}}'
+        reply_to: '{{from_email}}'
     }
 };
 
@@ -50,7 +50,9 @@ async function sendEmail(formData) {
             phone: formData.phone || 'Não informado',
             service: formData.service || 'Não informado',
             message: formData.message || 'Não informado',
-            reply_to: formData.email || 'noreply@overtech.com'
+            reply_to: formData.email || 'noreply@overtech.com',
+            current_date: new Date().toLocaleString('pt-BR'),
+            ip_do_usuário: window.location.hostname
         };
 
         const response = await emailjs.send(

@@ -655,16 +655,16 @@
                 
                 <form class="contact-form">
                     <div class="form-group">
-                        <input type="text" placeholder="Seu nome" required>
+                        <input type="text" name="name" placeholder="Seu nome" required>
                     </div>
                     <div class="form-group">
-                        <input type="email" placeholder="Seu email" required>
+                        <input type="email" name="email" placeholder="Seu email" required>
                     </div>
                     <div class="form-group">
-                        <input type="tel" placeholder="Seu telefone" required>
+                        <input type="tel" name="phone" placeholder="Seu telefone" required>
                     </div>
                     <div class="form-group">
-                        <select required>
+                        <select name="service" required>
                             <option value="">Tipo de serviço</option>
                             <optgroup label="Assistência Técnica">
                             <option value="manutencao">Manutenção de Computador</option>
@@ -684,7 +684,7 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <textarea placeholder="Descreva seu problema" rows="5" required></textarea>
+                        <textarea name="message" placeholder="Descreva seu problema" rows="5" required></textarea>
                     </div>
                     
                     <div class="form-group">
