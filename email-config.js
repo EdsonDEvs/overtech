@@ -3,13 +3,13 @@
 
 const EMAIL_CONFIG = {
     // ID do serviço EmailJS (substitua pelo seu)
-    SERVICE_ID: 'service_overtech',
+    SERVICE_ID: 'service_9gtot6j',
     
     // ID do template de email (substitua pelo seu)
-    TEMPLATE_ID: 'template_contact_form',
+    TEMPLATE_ID: 'template_kf7d5pi',
     
     // Chave pública do EmailJS (substitua pela sua)
-    PUBLIC_KEY: 'your_public_key_here',
+    PUBLIC_KEY: '7dLDYF5WMnhxNjRfa',
     
     // Email de destino
     TO_EMAIL: 'euedsonleandro@gmail.com',
