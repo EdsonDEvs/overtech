@@ -690,10 +690,10 @@
                     <div class="form-group">
                         <div class="recaptcha-container">
                             <label>Verificação de Segurança:</label>
-                            <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" data-theme="dark"></div>
-                            <p class="recaptcha-info">
+                            <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" data-theme="dark" data-callback="onRecaptchaSuccess" data-expired-callback="onRecaptchaExpired"></div>
+                            <p class="recaptcha-info" id="recaptcha-status">
                                 <i class="fas fa-shield-alt"></i>
-                                Proteção Google reCAPTCHA ativa
+                                <span id="recaptcha-text">Proteção Google reCAPTCHA ativa</span>
                             </p>
                         </div>
                     </div>

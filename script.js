@@ -150,9 +150,50 @@ stats.forEach(stat => {
 });
 
 // Google reCAPTCHA System
+let recaptchaCompleted = false;
+
 const verifyRecaptcha = () => {
-    const recaptchaResponse = grecaptcha.getResponse();
-    return recaptchaResponse.length > 0;
+    try {
+        if (typeof grecaptcha === 'undefined') {
+            console.error('reCAPTCHA não carregado!');
+            return false;
+        }
+        
+        const recaptchaResponse = grecaptcha.getResponse();
+        console.log('reCAPTCHA response:', recaptchaResponse);
+        console.log('reCAPTCHA completed:', recaptchaCompleted);
+        return recaptchaResponse && recaptchaResponse.length > 0 && recaptchaCompleted;
+    } catch (error) {
+        console.error('Erro ao verificar reCAPTCHA:', error);
+        return false;
+    }
+};
+
+// Callback functions for reCAPTCHA
+window.onRecaptchaSuccess = function(token) {
+    console.log('reCAPTCHA completado com sucesso!');
+    recaptchaCompleted = true;
+    
+    // Update visual status
+    const statusEl = document.getElementById('recaptcha-status');
+    const textEl = document.getElementById('recaptcha-text');
+    if (statusEl && textEl) {
+        statusEl.style.color = '#00ff88';
+        textEl.textContent = 'Verificação concluída com sucesso!';
+    }
+};
+
+window.onRecaptchaExpired = function() {
+    console.log('reCAPTCHA expirado!');
+    recaptchaCompleted = false;
+    
+    // Update visual status
+    const statusEl = document.getElementById('recaptcha-status');
+    const textEl = document.getElementById('recaptcha-text');
+    if (statusEl && textEl) {
+        statusEl.style.color = '#ff4757';
+        textEl.textContent = 'Verificação expirada. Clique novamente.';
+    }
 };
 
 // EmailJS System
@@ -163,6 +204,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof emailjs !== 'undefined') {
         emailJSReady = initEmailJS();
         console.log('EmailJS inicializado:', emailJSReady);
+    } else {
+        console.error('EmailJS não carregado!');
     }
 });
 
@@ -176,9 +219,11 @@ contactForm.addEventListener('submit', (e) => {
     
     // Google reCAPTCHA validation
     if (!verifyRecaptcha()) {
-        showNotification('Por favor, complete a verificação reCAPTCHA.', 'error');
+        showNotification('Por favor, complete a verificação reCAPTCHA marcando "Não sou um robô".', 'error');
         return;
     }
+    
+    console.log('reCAPTCHA validado com sucesso');
     
     // Simple validation
     const requiredFields = contactForm.querySelectorAll('[required]');
@@ -203,7 +248,9 @@ contactForm.addEventListener('submit', (e) => {
 
 // Email sending function via EmailJS
 const sendEmailViaEmailJS = async (data) => {
+    console.log('EmailJS Ready:', emailJSReady);
     if (!emailJSReady) {
+        console.error('EmailJS não está pronto!');
         showNotification('Sistema de email não disponível. Tente novamente em alguns instantes.', 'error');
         return;
     }
@@ -215,13 +262,16 @@ const sendEmailViaEmailJS = async (data) => {
     submitBtn.disabled = true;
 
     try {
+        console.log('Enviando email com dados:', data);
         const result = await sendEmail(data);
+        console.log('Resultado do envio:', result);
         
         if (result.success) {
             showNotification('Mensagem enviada com sucesso! Entraremos em contato em breve.', 'success');
             contactForm.reset();
             grecaptcha.reset();
         } else {
+            console.error('Erro no envio:', result.error);
             throw new Error(result.error);
         }
     } catch (error) {
