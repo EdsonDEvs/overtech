@@ -176,6 +176,18 @@ body {
     z-index: 2;
 }
 
+.hero-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.hero-image {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
 .hero-badge {
     display: inline-flex;
     align-items: center;
@@ -1194,14 +1206,14 @@ body {
     
     .nav-menu {
         position: fixed;
-        top: 0;
+        top: 70px;
         left: -100%;
         width: 100%;
-        height: 100vh;
+        height: calc(100vh - 70px);
         background: rgba(10, 10, 10, 0.98);
         backdrop-filter: blur(10px);
         flex-direction: column;
-        justify-content: center;
+        justify-content: start;
         align-items: center;
         padding: 2rem;
         transition: left 0.3s ease;
@@ -1236,11 +1248,36 @@ body {
         text-align: center;
         gap: 3rem;
         padding: 2rem 1rem;
+        margin-top: 50px;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .hero-text {
+        display: flex;
+        flex-direction: column;
+        order: 1;
+    }
+    
+    .hero-image {
+        margin-top: 3rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        order: 2;
+    }
+    
+    .scroll-indicator {
+        margin-top: 2rem;
+        position: relative;
+        top: auto;
+        left: auto;
+        transform: none;
     }
     
     .hero-text h1 {
         font-size: 2.8rem;
-        line-height: 1.2;
+        line-height: 1.8;
         margin-bottom: 1.5rem;
         flex-direction: column;
         gap: 0.5rem;
@@ -1249,6 +1286,7 @@ body {
     .hero-icon {
         width: 80px;
         height: 80px;
+        margin-bottom: 0.5rem;
     }
     
     .hero-text h2 {
@@ -1368,14 +1406,41 @@ body {
     }
     
     .tech-showcase {
-        width: 300px;
-        height: 300px;
+        width: 280px;
+        height: 200px;
+        margin-top: 0;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        flex-wrap: wrap;
     }
     
     .device {
         width: 60px;
         height: 60px;
         font-size: 1.5rem;
+        position: relative;
+        margin: 0.5rem;
+    }
+    
+    .device.laptop {
+        top: 0;
+        left: 0;
+    }
+    
+    .device.desktop {
+        top: 0;
+        right: 0;
+    }
+    
+    .device.mobile {
+        top: 0;
+        left: 0;
+        transform: none;
+    }
+    
+    .connection-lines {
+        display: none;
     }
     
     .testimonials-grid {
@@ -1438,6 +1503,28 @@ body {
     .hero-content {
         padding: 1rem 0.5rem;
         gap: 2rem;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .hero-text {
+        order: 1;
+    }
+    
+    .hero-image {
+        margin-top: 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        order: 2;
+    }
+    
+    .scroll-indicator {
+        margin-top: 1.5rem;
+        position: relative;
+        top: auto;
+        left: auto;
+        transform: none;
     }
     
     .hero-text h1 {
@@ -1578,14 +1665,41 @@ body {
     }
     
     .tech-showcase {
-        width: 220px;
-        height: 220px;
+        width: 240px;
+        height: 150px;
+        margin-top: 0;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        flex-wrap: wrap;
     }
     
     .device {
-        width: 45px;
-        height: 45px;
-        font-size: 1.1rem;
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+        position: relative;
+        margin: 0.3rem;
+    }
+    
+    .device.laptop {
+        top: 0;
+        left: 0;
+    }
+    
+    .device.desktop {
+        top: 0;
+        right: 0;
+    }
+    
+    .device.mobile {
+        top: 0;
+        left: 0;
+        transform: none;
+    }
+    
+    .connection-lines {
+        display: none;
     }
     
     .footer-content {
