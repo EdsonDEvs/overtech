@@ -149,12 +149,21 @@ stats.forEach(stat => {
     statsObserver.observe(stat);
 });
 
-// CAPTCHA System
-let currentCaptchaAnswer = 0;
+// Advanced CAPTCHA System
+let currentCaptchaData = {};
+let captchaType = '';
 
-const generateCaptcha = () => {
-    const num1 = Math.floor(Math.random() * 10) + 1;
-    const num2 = Math.floor(Math.random() * 10) + 1;
+const captchaTypes = [
+    'math',
+    'color',
+    'sequence',
+    'word',
+    'pattern'
+];
+
+const generateMathCaptcha = () => {
+    const num1 = Math.floor(Math.random() * 20) + 1;
+    const num2 = Math.floor(Math.random() * 20) + 1;
     const operations = ['+', '-', '*'];
     const operation = operations[Math.floor(Math.random() * operations.length)];
     
@@ -176,8 +185,171 @@ const generateCaptcha = () => {
             break;
     }
     
-    document.getElementById('captcha-question').textContent = question;
-    currentCaptchaAnswer = answer;
+    return {
+        question: `<div class="math-question">${question}</div>`,
+        answer: answer.toString(),
+        type: 'input'
+    };
+};
+
+const generateColorCaptcha = () => {
+    const colors = [
+        { name: 'Azul', value: 'blue', color: '#00d4ff' },
+        { name: 'Verde', value: 'green', color: '#00ff88' },
+        { name: 'Vermelho', value: 'red', color: '#ff4757' },
+        { name: 'Amarelo', value: 'yellow', color: '#ffa502' },
+        { name: 'Roxo', value: 'purple', color: '#a55eea' },
+        { name: 'Laranja', value: 'orange', color: '#ff6b35' }
+    ];
+    
+    const correctColor = colors[Math.floor(Math.random() * colors.length)];
+    const options = [...colors].sort(() => Math.random() - 0.5).slice(0, 4);
+    
+    if (!options.find(opt => opt.value === correctColor.value)) {
+        options[0] = correctColor;
+    }
+    
+    return {
+        question: `<div class="color-question">
+            <div class="color-box" style="background-color: ${correctColor.color}"></div>
+            <p>Qual é a cor mostrada?</p>
+        </div>`,
+        answer: correctColor.value,
+        options: options,
+        type: 'options'
+    };
+};
+
+const generateSequenceCaptcha = () => {
+    const sequences = [
+        { pattern: [2, 4, 6, 8], next: 10, question: 'Complete a sequência: 2, 4, 6, 8, ?' },
+        { pattern: [1, 4, 9, 16], next: 25, question: 'Complete a sequência: 1, 4, 9, 16, ?' },
+        { pattern: [1, 1, 2, 3, 5], next: 8, question: 'Complete a sequência: 1, 1, 2, 3, 5, ?' },
+        { pattern: [3, 6, 12, 24], next: 48, question: 'Complete a sequência: 3, 6, 12, 24, ?' }
+    ];
+    
+    const seq = sequences[Math.floor(Math.random() * sequences.length)];
+    const wrongOptions = [seq.next + 1, seq.next - 1, seq.next + 2, seq.next - 2];
+    const options = [seq.next, ...wrongOptions].sort(() => Math.random() - 0.5).slice(0, 4);
+    
+    return {
+        question: `<div class="sequence-question">${seq.question}</div>`,
+        answer: seq.next.toString(),
+        options: options.map(opt => ({ value: opt.toString(), name: opt.toString() })),
+        type: 'options'
+    };
+};
+
+const generateWordCaptcha = () => {
+    const words = [
+        { word: 'TECNOLOGIA', scrambled: 'TECNOLOGIA'.split('').sort(() => Math.random() - 0.5).join('') },
+        { word: 'COMPUTADOR', scrambled: 'COMPUTADOR'.split('').sort(() => Math.random() - 0.5).join('') },
+        { word: 'PROGRAMAÇÃO', scrambled: 'PROGRAMAÇÃO'.split('').sort(() => Math.random() - 0.5).join('') },
+        { word: 'DESENVOLVIMENTO', scrambled: 'DESENVOLVIMENTO'.split('').sort(() => Math.random() - 0.5).join('') }
+    ];
+    
+    const selected = words[Math.floor(Math.random() * words.length)];
+    const wrongOptions = words.filter(w => w.word !== selected.word).map(w => w.word);
+    const options = [selected.word, ...wrongOptions].sort(() => Math.random() - 0.5).slice(0, 4);
+    
+    return {
+        question: `<div class="word-question">
+            <p>Reordene as letras para formar uma palavra:</p>
+            <div class="scrambled-word">${selected.scrambled}</div>
+        </div>`,
+        answer: selected.word,
+        options: options.map(opt => ({ value: opt, name: opt })),
+        type: 'options'
+    };
+};
+
+const generatePatternCaptcha = () => {
+    const patterns = [
+        { pattern: '▲▼▲▼', next: '▲', question: 'Qual símbolo completa o padrão: ▲▼▲▼?' },
+        { pattern: '●●○●●○', next: '●', question: 'Qual símbolo completa o padrão: ●●○●●○?' },
+        { pattern: '123123', next: '1', question: 'Qual número completa o padrão: 123123?' },
+        { pattern: 'ABCABC', next: 'A', question: 'Qual letra completa o padrão: ABCABC?' }
+    ];
+    
+    const pat = patterns[Math.floor(Math.random() * patterns.length)];
+    const wrongOptions = ['▼', '○', '2', 'B', '3', 'C'].filter(opt => opt !== pat.next);
+    const options = [pat.next, ...wrongOptions].sort(() => Math.random() - 0.5).slice(0, 4);
+    
+    return {
+        question: `<div class="pattern-question">${pat.question}</div>`,
+        answer: pat.next,
+        options: options.map(opt => ({ value: opt, name: opt })),
+        type: 'options'
+    };
+};
+
+const generateCaptcha = () => {
+    captchaType = captchaTypes[Math.floor(Math.random() * captchaTypes.length)];
+    
+    switch(captchaType) {
+        case 'math':
+            currentCaptchaData = generateMathCaptcha();
+            break;
+        case 'color':
+            currentCaptchaData = generateColorCaptcha();
+            break;
+        case 'sequence':
+            currentCaptchaData = generateSequenceCaptcha();
+            break;
+        case 'word':
+            currentCaptchaData = generateWordCaptcha();
+            break;
+        case 'pattern':
+            currentCaptchaData = generatePatternCaptcha();
+            break;
+    }
+    
+    displayCaptcha();
+};
+
+const displayCaptcha = () => {
+    const questionEl = document.getElementById('captcha-question');
+    const optionsEl = document.getElementById('captcha-options');
+    const inputEl = document.getElementById('captcha-input');
+    
+    questionEl.innerHTML = currentCaptchaData.question;
+    
+    if (currentCaptchaData.type === 'options') {
+        optionsEl.style.display = 'grid';
+        inputEl.style.display = 'none';
+        
+        optionsEl.innerHTML = currentCaptchaData.options.map(option => 
+            `<div class="captcha-option" data-value="${option.value}">${option.name}</div>`
+        ).join('');
+        
+        // Add click listeners to options
+        optionsEl.querySelectorAll('.captcha-option').forEach(option => {
+            option.addEventListener('click', () => selectOption(option));
+        });
+    } else {
+        optionsEl.style.display = 'none';
+        inputEl.style.display = 'block';
+        document.getElementById('captcha-answer').value = '';
+    }
+};
+
+const selectOption = (selectedOption) => {
+    const options = document.querySelectorAll('.captcha-option');
+    options.forEach(opt => opt.classList.remove('selected'));
+    
+    selectedOption.classList.add('selected');
+    
+    if (selectedOption.dataset.value === currentCaptchaData.answer) {
+        selectedOption.classList.add('correct');
+        setTimeout(() => {
+            selectedOption.classList.remove('correct');
+        }, 1000);
+    } else {
+        selectedOption.classList.add('incorrect');
+        setTimeout(() => {
+            selectedOption.classList.remove('incorrect');
+        }, 1000);
+    }
 };
 
 // Initialize CAPTCHA
@@ -195,11 +367,19 @@ contactForm.addEventListener('submit', (e) => {
     const data = Object.fromEntries(formData);
     
     // CAPTCHA validation
-    const captchaAnswer = parseInt(document.getElementById('captcha-answer').value);
-    if (captchaAnswer !== currentCaptchaAnswer) {
-        showNotification('Resposta do CAPTCHA incorreta. Tente novamente.', 'error');
+    let captchaValid = false;
+    
+    if (currentCaptchaData.type === 'input') {
+        const captchaAnswer = document.getElementById('captcha-answer').value.trim();
+        captchaValid = captchaAnswer === currentCaptchaData.answer;
+    } else if (currentCaptchaData.type === 'options') {
+        const selectedOption = document.querySelector('.captcha-option.selected');
+        captchaValid = selectedOption && selectedOption.dataset.value === currentCaptchaData.answer;
+    }
+    
+    if (!captchaValid) {
+        showNotification('Verificação de segurança incorreta. Tente novamente.', 'error');
         generateCaptcha();
-        document.getElementById('captcha-answer').value = '';
         return;
     }
     

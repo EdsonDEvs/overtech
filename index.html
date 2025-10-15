@@ -690,13 +690,32 @@
                     <div class="form-group">
                         <div class="captcha-container">
                             <label for="captcha">Verificação de Segurança:</label>
-                            <div class="captcha-question">
-                                <span id="captcha-question">Quanto é 7 + 3?</span>
+                            <div class="captcha-header">
+                                <span>Complete a verificação para continuar</span>
                                 <button type="button" id="refresh-captcha" class="refresh-btn">
                                     <i class="fas fa-sync-alt"></i>
+                                    Nova Pergunta
                                 </button>
                             </div>
-                            <input type="number" id="captcha-answer" placeholder="Digite a resposta" required>
+                            
+                            <div class="captcha-content">
+                                <div class="captcha-question" id="captcha-question">
+                                    <!-- Conteúdo será inserido via JavaScript -->
+                                </div>
+                                
+                                <div class="captcha-options" id="captcha-options">
+                                    <!-- Opções serão inseridas via JavaScript -->
+                                </div>
+                                
+                                <div class="captcha-input" id="captcha-input" style="display: none;">
+                                    <input type="text" id="captcha-answer" placeholder="Digite sua resposta" required>
+                                </div>
+                            </div>
+                            
+                            <div class="captcha-status" id="captcha-status">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>Proteção contra bots ativa</span>
+                            </div>
                         </div>
                     </div>
                     
