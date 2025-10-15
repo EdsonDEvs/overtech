@@ -149,6 +149,43 @@ stats.forEach(stat => {
     statsObserver.observe(stat);
 });
 
+// CAPTCHA System
+let currentCaptchaAnswer = 0;
+
+const generateCaptcha = () => {
+    const num1 = Math.floor(Math.random() * 10) + 1;
+    const num2 = Math.floor(Math.random() * 10) + 1;
+    const operations = ['+', '-', '*'];
+    const operation = operations[Math.floor(Math.random() * operations.length)];
+    
+    let question = '';
+    let answer = 0;
+    
+    switch(operation) {
+        case '+':
+            question = `Quanto é ${num1} + ${num2}?`;
+            answer = num1 + num2;
+            break;
+        case '-':
+            question = `Quanto é ${num1} - ${num2}?`;
+            answer = num1 - num2;
+            break;
+        case '*':
+            question = `Quanto é ${num1} × ${num2}?`;
+            answer = num1 * num2;
+            break;
+    }
+    
+    document.getElementById('captcha-question').textContent = question;
+    currentCaptchaAnswer = answer;
+};
+
+// Initialize CAPTCHA
+generateCaptcha();
+
+// Refresh CAPTCHA button
+document.getElementById('refresh-captcha').addEventListener('click', generateCaptcha);
+
 // Form submission
 contactForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -156,6 +193,15 @@ contactForm.addEventListener('submit', (e) => {
     // Get form data
     const formData = new FormData(contactForm);
     const data = Object.fromEntries(formData);
+    
+    // CAPTCHA validation
+    const captchaAnswer = parseInt(document.getElementById('captcha-answer').value);
+    if (captchaAnswer !== currentCaptchaAnswer) {
+        showNotification('Resposta do CAPTCHA incorreta. Tente novamente.', 'error');
+        generateCaptcha();
+        document.getElementById('captcha-answer').value = '';
+        return;
+    }
     
     // Simple validation
     const requiredFields = contactForm.querySelectorAll('[required]');
@@ -171,13 +217,40 @@ contactForm.addEventListener('submit', (e) => {
     });
     
     if (isValid) {
-        // Show success message
-        showNotification('Solicitação enviada com sucesso! Entraremos em contato em breve.', 'success');
-        contactForm.reset();
+        // Send email
+        sendEmail(data);
     } else {
         showNotification('Por favor, preencha todos os campos obrigatórios.', 'error');
     }
 });
+
+// Email sending function
+const sendEmail = (data) => {
+    const emailBody = `
+Nova solicitação de contato - Over Tech
+
+Nome: ${data.name || 'Não informado'}
+Email: ${data.email || 'Não informado'}
+Telefone: ${data.phone || 'Não informado'}
+Tipo de Serviço: ${data.service || 'Não informado'}
+Mensagem: ${data.message || 'Não informado'}
+
+Data: ${new Date().toLocaleString('pt-BR')}
+IP: ${window.location.hostname}
+    `;
+    
+    const mailtoLink = `mailto:euedsonleandro@gmail.com?subject=Nova Solicitação - Over Tech&body=${encodeURIComponent(emailBody)}`;
+    
+    // Open email client
+    window.location.href = mailtoLink;
+    
+    // Show success message
+    showNotification('Email aberto com sucesso! Preencha e envie para euedsonleandro@gmail.com', 'success');
+    
+    // Reset form and generate new CAPTCHA
+    contactForm.reset();
+    generateCaptcha();
+};
 
 // Notification system
 const showNotification = (message, type = 'info') => {

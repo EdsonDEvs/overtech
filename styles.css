@@ -1255,6 +1255,91 @@ body {
     color: var(--text-primary);
 }
 
+/* CAPTCHA Styles */
+.captcha-container {
+    background: var(--dark-secondary);
+    padding: 1.5rem;
+    border-radius: 15px;
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    margin-bottom: 1rem;
+}
+
+.captcha-container label {
+    display: block;
+    color: var(--text-primary);
+    font-weight: 600;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+.captcha-question {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: var(--dark-bg);
+    border-radius: 10px;
+    border: 1px solid rgba(0, 212, 255, 0.1);
+}
+
+#captcha-question {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    flex: 1;
+}
+
+.refresh-btn {
+    background: var(--gradient-primary);
+    border: none;
+    color: white;
+    padding: 0.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+}
+
+.refresh-btn:hover {
+    transform: scale(1.1);
+    box-shadow: var(--shadow);
+}
+
+#captcha-answer {
+    width: 100%;
+    padding: 1rem;
+    background: var(--dark-bg);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    border-radius: 10px;
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+#captcha-answer:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+}
+
+.contact-alternative {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(0, 212, 255, 0.1);
+}
+
+.contact-alternative p {
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
 /* Footer */
 .footer {
     background: var(--dark-bg);
@@ -1955,5 +2040,25 @@ body {
     .tech-tag {
         font-size: 0.7rem;
         padding: 0.2rem 0.6rem;
+    }
+    
+    .captcha-container {
+        padding: 1rem;
+    }
+    
+    .captcha-question {
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+    }
+    
+    .refresh-btn {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .contact-alternative {
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
     }
 }
