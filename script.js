@@ -624,7 +624,6 @@ window.addEventListener('load', () => {
 
 // Portfolio tabs functionality
 const tabButtons = document.querySelectorAll('.tab-btn');
-const portfolioItems = document.querySelectorAll('.portfolio-item');
 
 tabButtons.forEach(button => {
     button.addEventListener('click', () => {
