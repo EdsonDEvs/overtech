@@ -155,6 +155,17 @@ const verifyRecaptcha = () => {
     return recaptchaResponse.length > 0;
 };
 
+// EmailJS System
+let emailJSReady = false;
+
+// Initialize EmailJS when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    if (typeof emailjs !== 'undefined') {
+        emailJSReady = initEmailJS();
+        console.log('EmailJS inicializado:', emailJSReady);
+    }
+});
+
 // Form submission
 contactForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -183,15 +194,48 @@ contactForm.addEventListener('submit', (e) => {
     });
     
     if (isValid) {
-        // Send email
-        sendEmail(data);
+        // Send email via EmailJS
+        sendEmailViaEmailJS(data);
     } else {
         showNotification('Por favor, preencha todos os campos obrigatórios.', 'error');
     }
 });
 
-// Email sending function
-const sendEmail = (data) => {
+// Email sending function via EmailJS
+const sendEmailViaEmailJS = async (data) => {
+    if (!emailJSReady) {
+        showNotification('Sistema de email não disponível. Tente novamente em alguns instantes.', 'error');
+        return;
+    }
+
+    // Show loading state
+    const submitBtn = document.getElementById('submit-form');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+    submitBtn.disabled = true;
+
+    try {
+        const result = await sendEmail(data);
+        
+        if (result.success) {
+            showNotification('Mensagem enviada com sucesso! Entraremos em contato em breve.', 'success');
+            contactForm.reset();
+            grecaptcha.reset();
+        } else {
+            throw new Error(result.error);
+        }
+    } catch (error) {
+        console.error('Erro ao enviar email:', error);
+        showNotification('Erro ao enviar mensagem. Tente novamente ou entre em contato via WhatsApp.', 'error');
+    } finally {
+        // Restore button state
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    }
+};
+
+// Fallback email function (if EmailJS fails)
+const sendEmailFallback = (data) => {
     const emailBody = `
 Nova solicitação de contato - Over Tech
 

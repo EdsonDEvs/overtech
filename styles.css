@@ -1330,6 +1330,22 @@ body {
     }
 }
 
+/* Button Loading State */
+.btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.btn .fa-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 /* Animations */
 @keyframes pulse {
     0%, 100% { transform: scale(1); }
