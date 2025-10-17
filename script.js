@@ -135,8 +135,8 @@ const statsObserver = new IntersectionObserver((entries) => {
                 animateCounter(statNumber, 500);
             } else if (text.includes('98')) {
                 animateCounter(statNumber, 98);
-            } else if (text.includes('5')) {
-                animateCounter(statNumber, 5);
+            } else if (text.includes('15')) {
+                animateCounter(statNumber, 15);
             }
             
             statsObserver.unobserve(entry.target);
