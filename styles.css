@@ -145,7 +145,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    z-index: 1;
+    z-index: 0;
 }
 
 .hero-particles {
@@ -154,6 +154,7 @@ body {
     height: 100%;
     background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><pattern id="particles" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="%2300d4ff" opacity="0.3"><animate attributeName="opacity" values="0.3;1;0.3" dur="3s" repeatCount="indefinite"/></circle></pattern></defs><rect width="100%" height="100%" fill="url(%23particles)"/></svg>');
     animation: float 20s ease-in-out infinite;
+    z-index: 0;
 }
 
 .hero-grid {
@@ -162,6 +163,7 @@ body {
     height: 100%;
     background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M 50 0 L 0 0 0 50" fill="none" stroke="%2300d4ff" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
     opacity: 0.3;
+    z-index: 0;
 }
 
 .hero-content {
@@ -179,6 +181,8 @@ body {
 .hero-text {
     display: flex;
     flex-direction: column;
+    position: relative;
+    z-index: 2;
 }
 
 .hero-image {
@@ -209,16 +213,15 @@ body {
 .hero-text h1 {
     font-size: 4rem;
     font-weight: 700;
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--primary-color);
     margin-bottom: 1rem;
-    line-height: 1.1;
+    line-height: 1.2;
     display: flex;
     align-items: center;
     gap: 1rem;
-    justify-content: center;
+    justify-content: flex-start;
+    position: relative;
+    z-index: 2;
 }
 
 .hero-icon {
@@ -809,6 +812,55 @@ body {
     color: var(--text-secondary);
     font-size: 0.9rem;
     font-weight: 500;
+}
+
+/* Video Demo Section */
+.video-demo {
+    padding: 6rem 0;
+    background: var(--dark-secondary);
+}
+
+.video-container {
+    position: relative;
+    max-width: 800px;
+    margin: 3rem auto;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    background: var(--dark-bg);
+}
+
+.demo-video {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 20px;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.demo-video:hover {
+    transform: scale(1.02);
+}
+
+/* Video overlay removed - no longer needed for autoplay */
+
+.video-description {
+    text-align: center;
+    max-width: 600px;
+    margin: 3rem auto 0;
+}
+
+.video-description h3 {
+    color: var(--primary-color);
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+}
+
+.video-description p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-size: 1.1rem;
 }
 
 /* Portfolio Section */
@@ -1553,16 +1605,17 @@ body {
     
     .hero-text h1 {
         font-size: 2.8rem;
-        line-height: 1.8;
+        line-height: 1.2;
         margin-bottom: 1.5rem;
-        flex-direction: column;
-        gap: 0.5rem;
+        flex-direction: row;
+        gap: 1rem;
+        justify-content: center;
     }
     
     .hero-icon {
         width: 80px;
         height: 80px;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0;
     }
     
     .hero-text h2 {
@@ -1789,6 +1842,25 @@ body {
         gap: 0.5rem;
     }
     
+    .video-container {
+        margin: 2rem auto;
+        border-radius: 15px;
+    }
+    
+    .demo-video {
+        border-radius: 15px;
+    }
+    
+    /* Video overlay and play button removed for autoplay */
+    
+    .video-description h3 {
+        font-size: 1.5rem;
+    }
+    
+    .video-description p {
+        font-size: 1rem;
+    }
+    
     .tab-btn {
         padding: 0.5rem 1rem;
         font-size: 0.9rem;
@@ -1842,9 +1914,10 @@ body {
     
     .hero-text h1 {
         font-size: 2.2rem;
-        line-height: 1.1;
-        flex-direction: column;
-        gap: 0.3rem;
+        line-height: 1.2;
+        flex-direction: row;
+        gap: 0.8rem;
+        justify-content: center;
     }
     
     .hero-icon {

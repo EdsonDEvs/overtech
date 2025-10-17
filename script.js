@@ -798,3 +798,5 @@ const handleSwipe = () => {
         }
     }
 };
+
+// Video Demo - Autoplay (no controls needed)
