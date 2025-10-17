@@ -509,29 +509,7 @@ rippleStyles.textContent = `
 `;
 document.head.appendChild(rippleStyles);
 
-// Add typing effect to hero title
-const typeWriter = (element, text, speed = 100) => {
-    let i = 0;
-    element.innerHTML = '';
-    
-    const timer = setInterval(() => {
-        if (i < text.length) {
-            element.innerHTML += text.charAt(i);
-            i++;
-        } else {
-            clearInterval(timer);
-        }
-    }, speed);
-};
-
-// Initialize typing effect when page loads
-window.addEventListener('load', () => {
-    const heroTitle = document.querySelector('.hero-text h1');
-    if (heroTitle) {
-        const originalText = heroTitle.textContent;
-        typeWriter(heroTitle, originalText, 150);
-    }
-});
+// Typing effect removed - title displays normally
 
 // Add scroll progress indicator
 const createScrollProgress = () => {
@@ -598,29 +576,7 @@ gridItems.forEach(item => {
     staggerObserver.observe(item);
 });
 
-// Add typing effect to hero badge
-const typeWriterBadge = (element, text, speed = 50) => {
-    let i = 0;
-    element.innerHTML = '';
-    
-    const timer = setInterval(() => {
-        if (i < text.length) {
-            element.innerHTML += text.charAt(i);
-            i++;
-        } else {
-            clearInterval(timer);
-        }
-    }, speed);
-};
-
-// Initialize badge typing effect
-window.addEventListener('load', () => {
-    const heroBadge = document.querySelector('.hero-badge span');
-    if (heroBadge) {
-        const originalText = heroBadge.textContent;
-        typeWriterBadge(heroBadge, originalText, 100);
-    }
-});
+// Badge typing effect removed - displays normally
 
 // Portfolio tabs functionality
 const tabButtons = document.querySelectorAll('.tab-btn');
