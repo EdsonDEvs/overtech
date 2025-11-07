@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Segurança em APIs REST: Boas Práticas Essenciais - Over Tech</title>
+    <meta name="description" content="Guia completo sobre autenticação JWT, rate limiting, validação de dados, HTTPS e outras práticas essenciais para proteger suas APIs contra vulnerabilidades comuns.">
+    <link rel="icon" type="image/png" sizes="96x96" href="../Icon Over (1).png">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../article-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-brand">
+                <a href="../index.html" style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none;">
+                    <img src="../Icon Over (1).png" alt="Over Tech Logo" class="brand-icon">
+                    <h2>Over Tech</h2>
+                </a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../index.html#home">Início</a></li>
+                <li><a href="../index.html#services">Serviços</a></li>
+                <li><a href="../index.html#automation">Projetos</a></li>
+                <li><a href="../index.html#articles">Artigos</a></li>
+                <li><a href="../index.html#about">Sobre</a></li>
+                <li><a href="../index.html#contact">Contato</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+
+    <nav class="breadcrumb">
+        <div class="container">
+            <a href="../index.html">Início</a>
+            <span>/</span>
+            <a href="../index.html#articles">Artigos</a>
+            <span>/</span>
+            <span class="current">Segurança em APIs</span>
+        </div>
+    </nav>
+
+    <article class="article-page">
+        <div class="article-header">
+            <div class="container">
+                <div class="article-meta-top">
+                    <span class="article-category-badge">Desenvolvimento</span>
+                    <span class="article-date-badge">20 Dez 2023</span>
+                    <span class="article-type-badge">
+                        <i class="fas fa-file-alt"></i>
+                        Artigo
+                    </span>
+                </div>
+                <h1 class="article-title">Segurança em APIs REST: Boas Práticas Essenciais</h1>
+                <p class="article-excerpt">Guia completo sobre autenticação JWT, rate limiting, validação de dados, HTTPS e outras práticas essenciais para proteger suas APIs contra vulnerabilidades comuns.</p>
+                <div class="article-meta-bottom">
+                    <span class="article-read-time">
+                        <i class="far fa-clock"></i>
+                        12 min
+                    </span>
+                    <div class="article-share">
+                        <span>Compartilhar:</span>
+                        <a href="#" class="share-btn"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="share-btn"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="share-btn"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="share-btn"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="article-content-wrapper">
+            <div class="container">
+                <div class="article-layout">
+                    <main class="article-main">
+                        <div class="article-featured-image">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        
+                        <div class="article-body">
+                            <h2>Por que segurança em APIs é crítica?</h2>
+                            <p>APIs são a espinha dorsal de aplicações modernas. Uma vulnerabilidade pode resultar em:</p>
+                            <ul>
+                                <li>Vazamento de dados sensíveis</li>
+                                <li>Acesso não autorizado</li>
+                                <li>Denial of Service (DoS)</li>
+                                <li>Perda de confiança dos usuários</li>
+                                <li>Consequências legais e financeiras</li>
+                            </ul>
+
+                            <h2>1. Autenticação e Autorização</h2>
+                            
+                            <h3>JWT (JSON Web Tokens)</h3>
+                            <p>JWT é o padrão moderno para autenticação stateless:</p>
+                            <pre><code>// Gerar token
+const jwt = require('jsonwebtoken');
+const token = jwt.sign(
+    { userId: user.id, email: user.email },
+    process.env.JWT_SECRET,
+    { expiresIn: '24h' }
+);
+
+// Verificar token
+const verifyToken = (req, res, next) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    
+    if (!token) {
+        return res.status(401).json({ error: 'Token não fornecido' });
+    }
+    
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded;
+        next();
+    } catch (error) {
+        return res.status(401).json({ error: 'Token inválido' });
+    }
+};</code></pre>
+
+                            <h3>OAuth 2.0</h3>
+                            <p>Para aplicações mais complexas, use OAuth 2.0 com fluxos apropriados (Authorization Code, Client Credentials, etc.).</p>
+
+                            <h3>API Keys</h3>
+                            <p>Para acesso de aplicações, use API keys com rotação periódica:</p>
+                            <pre><code>// Middleware de validação de API Key
+const validateApiKey = (req, res, next) => {
+    const apiKey = req.headers['x-api-key'];
+    
+    if (!apiKey || !isValidApiKey(apiKey)) {
+        return res.status(401).json({ error: 'API Key inválida' });
+    }
+    
+    req.apiKey = apiKey;
+    next();
+};</code></pre>
+
+                            <h2>2. HTTPS - Sempre Use</h2>
+                            <p>HTTPS é obrigatório. Nunca exponha APIs em HTTP:</p>
+                            <ul>
+                                <li>Criptografa dados em trânsito</li>
+                                <li>Previne man-in-the-middle attacks</li>
+                                <li>Protege credenciais</li>
+                                <li>Melhora SEO e confiança</li>
+                            </ul>
+
+                            <h2>3. Rate Limiting</h2>
+                            <p>Proteja sua API contra abuso e DoS:</p>
+                            <pre><code>const rateLimit = require('express-rate-limit');
+
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutos
+    max: 100, // máximo 100 requests
+    message: 'Muitas requisições, tente novamente mais tarde',
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
+app.use('/api/', limiter);
+
+// Rate limiting por IP e por usuário
+const userLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hora
+    max: 10, // 10 requisições por hora por usuário
+    keyGenerator: (req) => req.user?.id || req.ip,
+});</code></pre>
+
+                            <h2>4. Validação de Dados</h2>
+                            <p>Valide e sanitize todos os dados de entrada:</p>
+                            <pre><code>const { body, validationResult } = require('express-validator');
+
+const validateUser = [
+    body('email').isEmail().normalizeEmail(),
+    body('password').isLength({ min: 8 }).matches(/[A-Z]/).matches(/[0-9]/),
+    body('name').trim().escape().isLength({ min: 2, max: 50 }),
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        next();
+    }
+];</code></pre>
+
+                            <h2>5. Proteção contra SQL Injection</h2>
+                            <p>Use prepared statements ou ORMs:</p>
+                            <pre><code>// ❌ NUNCA faça isso
+const query = `SELECT * FROM users WHERE email = '${email}'`;
+
+// ✅ Use prepared statements
+const query = 'SELECT * FROM users WHERE email = ?';
+db.query(query, [email], (err, results) => {
+    // ...
+});
+
+// ✅ Ou use ORM
+const user = await User.findOne({ where: { email } });</code></pre>
+
+                            <h2>6. CORS (Cross-Origin Resource Sharing)</h2>
+                            <p>Configure CORS adequadamente:</p>
+                            <pre><code>const cors = require('cors');
+
+const corsOptions = {
+    origin: process.env.ALLOWED_ORIGINS.split(','),
+    credentials: true,
+    optionsSuccessStatus: 200,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-API-Key'],
+};
+
+app.use(cors(corsOptions));</code></pre>
+
+                            <h2>7. Headers de Segurança</h2>
+                            <p>Configure headers de segurança HTTP:</p>
+                            <pre><code>const helmet = require('helmet');
+
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            styleSrc: ["'self'", "'unsafe-inline'"],
+        },
+    },
+    hsts: {
+        maxAge: 31536000,
+        includeSubDomains: true,
+        preload: true
+    }
+}));</code></pre>
+
+                            <h2>8. Logging e Monitoramento</h2>
+                            <p>Registre atividades suspeitas:</p>
+                            <pre><code>const winston = require('winston');
+
+const logger = winston.createLogger({
+    level: 'info',
+    format: winston.format.json(),
+    transports: [
+        new winston.transports.File({ filename: 'error.log', level: 'error' }),
+        new winston.transports.File({ filename: 'combined.log' }),
+    ],
+});
+
+// Log de requisições suspeitas
+app.use((req, res, next) => {
+    if (req.statusCode >= 400) {
+        logger.warn({
+            ip: req.ip,
+            method: req.method,
+            url: req.url,
+            statusCode: res.statusCode,
+        });
+    }
+    next();
+});</code></pre>
+
+                            <h2>9. Sanitização de Erros</h2>
+                            <p>Nunca exponha detalhes internos em erros:</p>
+                            <pre><code>// ❌ Ruim
+res.status(500).json({ error: err.message });
+
+// ✅ Bom
+if (process.env.NODE_ENV === 'production') {
+    res.status(500).json({ error: 'Erro interno do servidor' });
+} else {
+    res.status(500).json({ error: err.message });
+}</code></pre>
+
+                            <h2>10. Versionamento de API</h2>
+                            <p>Versione sua API para permitir mudanças sem quebrar clientes:</p>
+                            <pre><code>app.use('/api/v1', v1Router);
+app.use('/api/v2', v2Router);</code></pre>
+
+                            <h2>Checklist de Segurança</h2>
+                            <ul>
+                                <li>✅ HTTPS em produção</li>
+                                <li>✅ Autenticação implementada</li>
+                                <li>✅ Autorização por roles/permissões</li>
+                                <li>✅ Rate limiting configurado</li>
+                                <li>✅ Validação de entrada</li>
+                                <li>✅ Proteção contra SQL injection</li>
+                                <li>✅ CORS configurado corretamente</li>
+                                <li>✅ Headers de segurança</li>
+                                <li>✅ Logging de segurança</li>
+                                <li>✅ Secrets em variáveis de ambiente</li>
+                                <li>✅ Sanitização de erros</li>
+                                <li>✅ Testes de segurança</li>
+                            </ul>
+
+                            <h2>Ferramentas de Teste</h2>
+                            <ul>
+                                <li><strong>OWASP ZAP:</strong> Scanner de vulnerabilidades</li>
+                                <li><strong>Postman:</strong> Testes de API</li>
+                                <li><strong>Burp Suite:</strong> Análise de segurança</li>
+                                <li><strong>npm audit:</strong> Verificar dependências</li>
+                            </ul>
+
+                            <blockquote>
+                                <p><strong>Lembre-se:</strong> Segurança não é um produto, é um processo. Revise e atualize constantemente suas práticas de segurança.</p>
+                            </blockquote>
+                        </div>
+
+                        <div class="article-tags">
+                            <span class="tags-label">Tags:</span>
+                            <a href="#" class="tag">Segurança</a>
+                            <a href="#" class="tag">API</a>
+                            <a href="#" class="tag">REST</a>
+                            <a href="#" class="tag">JWT</a>
+                            <a href="#" class="tag">Backend</a>
+                        </div>
+
+                        <div class="article-cta">
+                            <h3>Precisa de ajuda com segurança?</h3>
+                            <p>Nossa equipe pode ajudar você a implementar as melhores práticas de segurança em suas APIs.</p>
+                            <a href="../index.html#contact" class="btn btn-primary">
+                                <i class="fas fa-envelope"></i>
+                                Entre em Contato
+                            </a>
+                            <a href="https://wa.me/+5531997599924" target="_blank" class="btn btn-secondary">
+                                <i class="fab fa-whatsapp"></i>
+                                WhatsApp
+                            </a>
+                        </div>
+
+                        <div class="related-articles">
+                            <h3>Artigos Relacionados</h3>
+                            <div class="related-grid">
+                                <a href="nodejs-performance.html" class="related-card">
+                                    <div class="related-card-image">
+                                        <i class="fab fa-node-js"></i>
+                                    </div>
+                                    <div class="related-card-content">
+                                        <h4>5 Estratégias para Otimizar Performance em Node.js</h4>
+                                        <p>Técnicas avançadas para melhorar performance.</p>
+                                    </div>
+                                </a>
+                                <a href="pix-ecommerce-integration.html" class="related-card">
+                                    <div class="related-card-image">
+                                        <i class="fas fa-shopping-cart"></i>
+                                    </div>
+                                    <div class="related-card-content">
+                                        <h4>Como Integrar Pagamento PIX em seu E-commerce</h4>
+                                        <p>Tutorial completo de integração PIX.</p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </main>
+
+                    <aside class="article-sidebar">
+                        <div class="sidebar-widget">
+                            <h4>Receba Novos Artigos</h4>
+                            <p>Cadastre-se para receber nossos artigos e tutoriais por email.</p>
+                            <a href="../index.html#contact" class="btn btn-primary btn-block">
+                                <i class="fas fa-envelope"></i>
+                                Cadastrar
+                            </a>
+                        </div>
+
+                        <div class="sidebar-widget">
+                            <h4>Categorias</h4>
+                            <ul class="category-list">
+                                <li><a href="../index.html#articles">Automação</a></li>
+                                <li><a href="../index.html#articles">Desenvolvimento</a></li>
+                                <li><a href="../index.html#articles">Comparações</a></li>
+                                <li><a href="../index.html#articles">Tutoriais</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="sidebar-widget">
+                            <h4>Serviços</h4>
+                            <ul class="services-list">
+                                <li><a href="../index.html#services">Desenvolvimento Web</a></li>
+                                <li><a href="../index.html#services">E-commerce</a></li>
+                                <li><a href="../index.html#services">Sistemas Personalizados</a></li>
+                                <li><a href="../index.html#services">Automação com n8n</a></li>
+                            </ul>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>
+                        <img src="../Icon Over (1).png" alt="Over Tech Logo" class="footer-icon">
+                        Over Tech
+                    </h3>
+                    <p>Sua empresa de desenvolvimento de confiança</p>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Links Rápidos</h4>
+                    <ul>
+                        <li><a href="../index.html#home">Início</a></li>
+                        <li><a href="../index.html#services">Serviços</a></li>
+                        <li><a href="../index.html#articles">Artigos</a></li>
+                        <li><a href="../index.html#about">Sobre</a></li>
+                        <li><a href="../index.html#contact">Contato</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-social">
+                    <h4>Redes Sociais</h4>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="https://www.instagram.com/overtech.br/"><i class="fab fa-instagram"></i></a>
+                        <a href="https://wa.me/+5531997599924"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Over Tech. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+</body>
+</html>
+

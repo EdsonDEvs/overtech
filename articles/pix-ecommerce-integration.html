@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Como Integrar Pagamento PIX em seu E-commerce - Over Tech</title>
+    <meta name="description" content="Tutorial passo a passo de como integrar pagamentos PIX em sua loja virtual, incluindo configuração de webhooks, tratamento de status de pagamento e melhorias na experiência do usuário.">
+    <link rel="icon" type="image/png" sizes="96x96" href="../Icon Over (1).png">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../article-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-brand">
+                <a href="../index.html" style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none;">
+                    <img src="../Icon Over (1).png" alt="Over Tech Logo" class="brand-icon">
+                    <h2>Over Tech</h2>
+                </a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../index.html#home">Início</a></li>
+                <li><a href="../index.html#services">Serviços</a></li>
+                <li><a href="../index.html#automation">Projetos</a></li>
+                <li><a href="../index.html#articles">Artigos</a></li>
+                <li><a href="../index.html#about">Sobre</a></li>
+                <li><a href="../index.html#contact">Contato</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+
+    <nav class="breadcrumb">
+        <div class="container">
+            <a href="../index.html">Início</a>
+            <span>/</span>
+            <a href="../index.html#articles">Artigos</a>
+            <span>/</span>
+            <span class="current">Integração PIX</span>
+        </div>
+    </nav>
+
+    <article class="article-page">
+        <div class="article-header">
+            <div class="container">
+                <div class="article-meta-top">
+                    <span class="article-category-badge">Tutorial</span>
+                    <span class="article-date-badge">2 Jan 2024</span>
+                    <span class="article-type-badge">
+                        <i class="fas fa-play-circle"></i>
+                        Vídeo
+                    </span>
+                </div>
+                <h1 class="article-title">Como Integrar Pagamento PIX em seu E-commerce</h1>
+                <p class="article-excerpt">Tutorial passo a passo de como integrar pagamentos PIX em sua loja virtual, incluindo configuração de webhooks, tratamento de status de pagamento e melhorias na experiência do usuário.</p>
+                <div class="article-meta-bottom">
+                    <span class="article-read-time">
+                        <i class="far fa-clock"></i>
+                        15 min
+                    </span>
+                    <div class="article-share">
+                        <span>Compartilhar:</span>
+                        <a href="#" class="share-btn"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="share-btn"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="share-btn"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="share-btn"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="article-content-wrapper">
+            <div class="container">
+                <div class="article-layout">
+                    <main class="article-main">
+                        <div class="article-featured-image">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        
+                        <div class="article-body">
+                            <h2>Por que PIX é essencial para e-commerce brasileiro?</h2>
+                            <p>O PIX se tornou o método de pagamento preferido no Brasil. Com confirmação instantânea e taxas baixas, integrar PIX no seu e-commerce não é mais opcional - é essencial.</p>
+
+                            <h2>Escolhendo o Gateway de Pagamento</h2>
+                            <p>Principais opções no mercado brasileiro:</p>
+                            <ul>
+                                <li><strong>Stripe:</strong> Internacional, suporte PIX via PagSeguro</li>
+                                <li><strong>PagSeguro:</strong> Nativo brasileiro, excelente documentação</li>
+                                <li><strong>Mercado Pago:</strong> Popular, fácil integração</li>
+                                <li><strong>Asaas:</strong> Focado em PIX, taxas competitivas</li>
+                            </ul>
+
+                            <h2>Passo 1: Criar Conta e Obter Credenciais</h2>
+                            <p>Após escolher o gateway, você precisará de:</p>
+                            <ul>
+                                <li>API Key (produção e sandbox)</li>
+                                <li>Webhook Secret</li>
+                                <li>Certificado (se necessário)</li>
+                            </ul>
+
+                            <h2>Passo 2: Instalar SDK</h2>
+                            <pre><code>// Node.js com PagSeguro
+npm install pagseguro-nodejs
+
+// Ou usando Axios para API direta
+npm install axios</code></pre>
+
+                            <h2>Passo 3: Criar Pedido com PIX</h2>
+                            <pre><code>const pagseguro = require('pagseguro-nodejs');
+
+const payment = new pagseguro.Payment({
+    email: 'seu-email@exemplo.com',
+    token: 'SEU_TOKEN',
+    mode: 'sandbox' // ou 'production'
+});
+
+payment.currency('BRL');
+payment.reference('PEDIDO-12345');
+
+// Adicionar itens
+payment.addItem({
+    id: '1',
+    description: 'Produto Exemplo',
+    amount: '100.00',
+    quantity: 1
+});
+
+// Configurar PIX
+payment.paymentMethod('pix', {
+    expiration: 3600 // 1 hora
+});
+
+payment.send((error, response) => {
+    if (error) {
+        console.error(error);
+        return;
+    }
+    
+    // Retornar QR Code e código PIX para o cliente
+    console.log(response.pix.qrCode);
+    console.log(response.pix.copyPaste);
+});</code></pre>
+
+                            <h2>Passo 4: Configurar Webhook</h2>
+                            <p>Webhooks são essenciais para receber notificações de pagamento em tempo real:</p>
+                            <pre><code>// Endpoint para receber webhooks
+app.post('/webhook/pagseguro', async (req, res) => {
+    const notificationCode = req.body.notificationCode;
+    
+    // Verificar assinatura do webhook
+    const isValid = verifyWebhookSignature(req);
+    if (!isValid) {
+        return res.status(401).send('Unauthorized');
+    }
+    
+    // Consultar status do pagamento
+    const paymentStatus = await getPaymentStatus(notificationCode);
+    
+    // Atualizar pedido no banco de dados
+    await updateOrderStatus(paymentStatus.reference, paymentStatus.status);
+    
+    res.status(200).send('OK');
+});
+
+async function getPaymentStatus(notificationCode) {
+    const response = await axios.get(
+        `https://ws.sandbox.pagseguro.uol.com.br/v3/transactions/notifications/${notificationCode}`,
+        {
+            params: {
+                email: process.env.PAGSEGURO_EMAIL,
+                token: process.env.PAGSEGURO_TOKEN
+            }
+        }
+    );
+    
+    return {
+        reference: response.data.reference,
+        status: response.data.status,
+        amount: response.data.grossAmount
+    };
+}</code></pre>
+
+                            <h2>Passo 5: Interface do Usuário</h2>
+                            <p>Crie uma interface amigável para exibir o QR Code e código PIX:</p>
+                            <pre><code>// React Component
+function PixPayment({ qrCode, copyPasteCode }) {
+    const [copied, setCopied] = useState(false);
+    
+    const copyToClipboard = () => {
+        navigator.clipboard.writeText(copyPasteCode);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+    
+    return (
+        <div className="pix-payment">
+            <h3>Pagamento via PIX</h3>
+            <QRCode value={qrCode} size={256} />
+            <button onClick={copyToClipboard}>
+                {copied ? 'Copiado!' : 'Copiar código PIX'}
+            </button>
+            <p>Escaneie o QR Code ou copie o código PIX</p>
+        </div>
+    );
+}</code></pre>
+
+                            <h2>Passo 6: Verificação de Pagamento</h2>
+                            <p>Implemente polling ou use webhooks para verificar status:</p>
+                            <pre><code>// Verificação periódica (fallback)
+setInterval(async () => {
+    const pendingOrders = await getPendingPixOrders();
+    
+    for (const order of pendingOrders) {
+        const status = await checkPaymentStatus(order.paymentId);
+        
+        if (status === 'PAID') {
+            await confirmOrder(order.id);
+            // Enviar email de confirmação
+            await sendConfirmationEmail(order);
+        }
+    }
+}, 60000); // A cada minuto</code></pre>
+
+                            <h2>Melhorias na Experiência do Usuário</h2>
+                            
+                            <h3>1. Contador de Expiração</h3>
+                            <p>Mostre ao cliente quanto tempo resta para pagar:</p>
+                            <pre><code>function CountdownTimer({ expiresAt }) {
+    const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(expiresAt));
+    
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setTimeLeft(calculateTimeLeft(expiresAt));
+        }, 1000);
+        
+        return () => clearInterval(timer);
+    }, [expiresAt]);
+    
+    return <div>Tempo restante: {timeLeft}</div>;
+}</code></pre>
+
+                            <h3>2. Notificação em Tempo Real</h3>
+                            <p>Use WebSockets ou Server-Sent Events para notificar quando o pagamento for confirmado:</p>
+                            <pre><code>// WebSocket para atualização em tempo real
+const io = require('socket.io')(server);
+
+io.on('connection', (socket) => {
+    socket.on('subscribe-order', (orderId) => {
+        socket.join(`order-${orderId}`);
+    });
+});
+
+// Quando pagamento for confirmado
+io.to(`order-${orderId}`).emit('payment-confirmed');</code></pre>
+
+                            <h3>3. Redirecionamento Automático</h3>
+                            <p>Após confirmação, redirecione automaticamente para página de sucesso.</p>
+
+                            <h2>Tratamento de Erros</h2>
+                            <p>Sempre implemente tratamento robusto de erros:</p>
+                            <ul>
+                                <li>Timeouts de pagamento</li>
+                                <li>Pagamentos duplicados</li>
+                                <li>Falhas na comunicação com gateway</li>
+                                <li>Validação de valores</li>
+                            </ul>
+
+                            <h2>Segurança</h2>
+                            <p>Mantenha suas credenciais seguras:</p>
+                            <ul>
+                                <li>Nunca commite credenciais no código</li>
+                                <li>Use variáveis de ambiente</li>
+                                <li>Valide assinatura de webhooks</li>
+                                <li>Implemente rate limiting</li>
+                                <li>Use HTTPS sempre</li>
+                            </ul>
+
+                            <h2>Testes</h2>
+                            <p>Teste todos os cenários:</p>
+                            <ul>
+                                <li>Pagamento bem-sucedido</li>
+                                <li>Pagamento expirado</li>
+                                <li>Cancelamento</li>
+                                <li>Estornos</li>
+                                <li>Webhooks duplicados</li>
+                            </ul>
+
+                            <blockquote>
+                                <p><strong>Dica profissional:</strong> Sempre teste em ambiente sandbox antes de ir para produção. A maioria dos gateways oferece ferramentas para simular diferentes cenários de pagamento.</p>
+                            </blockquote>
+                        </div>
+
+                        <div class="article-tags">
+                            <span class="tags-label">Tags:</span>
+                            <a href="#" class="tag">PIX</a>
+                            <a href="#" class="tag">E-commerce</a>
+                            <a href="#" class="tag">Pagamentos</a>
+                            <a href="#" class="tag">Tutorial</a>
+                            <a href="#" class="tag">Integração</a>
+                        </div>
+
+                        <div class="article-cta">
+                            <h3>Precisa integrar PIX no seu e-commerce?</h3>
+                            <p>Nossa equipe pode ajudar você a implementar pagamentos PIX de forma rápida e segura.</p>
+                            <a href="../index.html#contact" class="btn btn-primary">
+                                <i class="fas fa-envelope"></i>
+                                Entre em Contato
+                            </a>
+                            <a href="https://wa.me/+5531997599924" target="_blank" class="btn btn-secondary">
+                                <i class="fab fa-whatsapp"></i>
+                                WhatsApp
+                            </a>
+                        </div>
+
+                        <div class="related-articles">
+                            <h3>Artigos Relacionados</h3>
+                            <div class="related-grid">
+                                <a href="api-security.html" class="related-card">
+                                    <div class="related-card-image">
+                                        <i class="fas fa-shield-alt"></i>
+                                    </div>
+                                    <div class="related-card-content">
+                                        <h4>Segurança em APIs REST: Boas Práticas Essenciais</h4>
+                                        <p>Guia completo sobre segurança em APIs REST.</p>
+                                    </div>
+                                </a>
+                                <a href="nodejs-performance.html" class="related-card">
+                                    <div class="related-card-image">
+                                        <i class="fab fa-node-js"></i>
+                                    </div>
+                                    <div class="related-card-content">
+                                        <h4>5 Estratégias para Otimizar Performance em Node.js</h4>
+                                        <p>Técnicas avançadas para melhorar performance.</p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </main>
+
+                    <aside class="article-sidebar">
+                        <div class="sidebar-widget">
+                            <h4>Receba Novos Artigos</h4>
+                            <p>Cadastre-se para receber nossos artigos e tutoriais por email.</p>
+                            <a href="../index.html#contact" class="btn btn-primary btn-block">
+                                <i class="fas fa-envelope"></i>
+                                Cadastrar
+                            </a>
+                        </div>
+
+                        <div class="sidebar-widget">
+                            <h4>Categorias</h4>
+                            <ul class="category-list">
+                                <li><a href="../index.html#articles">Automação</a></li>
+                                <li><a href="../index.html#articles">Desenvolvimento</a></li>
+                                <li><a href="../index.html#articles">Comparações</a></li>
+                                <li><a href="../index.html#articles">Tutoriais</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="sidebar-widget">
+                            <h4>Serviços</h4>
+                            <ul class="services-list">
+                                <li><a href="../index.html#services">Desenvolvimento Web</a></li>
+                                <li><a href="../index.html#services">E-commerce</a></li>
+                                <li><a href="../index.html#services">Sistemas Personalizados</a></li>
+                                <li><a href="../index.html#services">Automação com n8n</a></li>
+                            </ul>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>
+                        <img src="../Icon Over (1).png" alt="Over Tech Logo" class="footer-icon">
+                        Over Tech
+                    </h3>
+                    <p>Sua empresa de desenvolvimento de confiança</p>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Links Rápidos</h4>
+                    <ul>
+                        <li><a href="../index.html#home">Início</a></li>
+                        <li><a href="../index.html#services">Serviços</a></li>
+                        <li><a href="../index.html#articles">Artigos</a></li>
+                        <li><a href="../index.html#about">Sobre</a></li>
+                        <li><a href="../index.html#contact">Contato</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-social">
+                    <h4>Redes Sociais</h4>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="https://www.instagram.com/overtech.br/"><i class="fab fa-instagram"></i></a>
+                        <a href="https://wa.me/+5531997599924"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Over Tech. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+</body>
+</html>
+

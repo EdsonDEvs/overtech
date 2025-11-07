@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5 Estratégias para Otimizar Performance em Node.js - Over Tech</title>
+    <meta name="description" content="Técnicas avançadas para melhorar a performance de suas aplicações Node.js, incluindo cache, processamento assíncrono, clustering e otimização de queries de banco de dados.">
+    <link rel="icon" type="image/png" sizes="96x96" href="../Icon Over (1).png">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../article-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-brand">
+                <a href="../index.html" style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none;">
+                    <img src="../Icon Over (1).png" alt="Over Tech Logo" class="brand-icon">
+                    <h2>Over Tech</h2>
+                </a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../index.html#home">Início</a></li>
+                <li><a href="../index.html#services">Serviços</a></li>
+                <li><a href="../index.html#automation">Projetos</a></li>
+                <li><a href="../index.html#articles">Artigos</a></li>
+                <li><a href="../index.html#about">Sobre</a></li>
+                <li><a href="../index.html#contact">Contato</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+
+    <nav class="breadcrumb">
+        <div class="container">
+            <a href="../index.html">Início</a>
+            <span>/</span>
+            <a href="../index.html#articles">Artigos</a>
+            <span>/</span>
+            <span class="current">Performance Node.js</span>
+        </div>
+    </nav>
+
+    <article class="article-page">
+        <div class="article-header">
+            <div class="container">
+                <div class="article-meta-top">
+                    <span class="article-category-badge">Desenvolvimento</span>
+                    <span class="article-date-badge">5 Jan 2024</span>
+                    <span class="article-type-badge">
+                        <i class="fas fa-file-alt"></i>
+                        Artigo
+                    </span>
+                </div>
+                <h1 class="article-title">5 Estratégias para Otimizar Performance em Aplicações Node.js</h1>
+                <p class="article-excerpt">Técnicas avançadas para melhorar a performance de suas aplicações Node.js, incluindo cache, processamento assíncrono, clustering e otimização de queries de banco de dados.</p>
+                <div class="article-meta-bottom">
+                    <span class="article-read-time">
+                        <i class="far fa-clock"></i>
+                        10 min
+                    </span>
+                    <div class="article-share">
+                        <span>Compartilhar:</span>
+                        <a href="#" class="share-btn"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="share-btn"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="share-btn"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="share-btn"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="article-content-wrapper">
+            <div class="container">
+                <div class="article-layout">
+                    <main class="article-main">
+                        <div class="article-featured-image">
+                            <i class="fab fa-node-js"></i>
+                        </div>
+                        
+                        <div class="article-body">
+                            <h2>Por que otimizar performance é crucial?</h2>
+                            <p>Performance não é apenas uma questão técnica - é um fator crítico de negócio. Aplicações lentas resultam em:</p>
+                            <ul>
+                                <li>Perda de usuários (53% abandonam sites que levam mais de 3 segundos)</li>
+                                <li>Redução de conversões</li>
+                                <li>Maior custo de infraestrutura</li>
+                                <li>Experiência de usuário ruim</li>
+                            </ul>
+
+                            <h2>1. Implementar Cache Estratégico</h2>
+                            <p>Cache é uma das técnicas mais efetivas para melhorar performance. Node.js oferece várias opções:</p>
+
+                            <h3>Cache em Memória (Redis)</h3>
+                            <p>Use Redis para cache de dados frequentemente acessados:</p>
+                            <pre><code>const redis = require('redis');
+const client = redis.createClient();
+
+async function getCachedData(key) {
+    const cached = await client.get(key);
+    if (cached) return JSON.parse(cached);
+    
+    const data = await fetchFromDatabase();
+    await client.setex(key, 3600, JSON.stringify(data));
+    return data;
+}</code></pre>
+
+                            <h3>Cache HTTP</h3>
+                            <p>Implemente headers de cache para recursos estáticos:</p>
+                            <pre><code>app.use(express.static('public', {
+    maxAge: '1y',
+    etag: true
+}));</code></pre>
+
+                            <h2>2. Otimizar Processamento Assíncrono</h2>
+                            <p>Node.js é single-threaded, mas excelente em I/O assíncrono. Aproveite isso:</p>
+
+                            <h3>Use Async/Await corretamente</h3>
+                            <pre><code>// ❌ Ruim - operações sequenciais desnecessárias
+const user = await getUser(id);
+const profile = await getProfile(user.id);
+const settings = await getSettings(user.id);
+
+// ✅ Bom - operações paralelas
+const [user, profile, settings] = await Promise.all([
+    getUser(id),
+    getProfile(id),
+    getSettings(id)
+]);</code></pre>
+
+                            <h3>Streams para grandes volumes de dados</h3>
+                            <pre><code>const fs = require('fs');
+const readStream = fs.createReadStream('large-file.json');
+const writeStream = fs.createWriteStream('output.json');
+
+readStream.pipe(writeStream);</code></pre>
+
+                            <h2>3. Clustering para Aproveitar Múltiplos Cores</h2>
+                            <p>Node.js por padrão usa apenas um core da CPU. Use clustering para aproveitar todos:</p>
+                            <pre><code>const cluster = require('cluster');
+const os = require('os');
+
+if (cluster.isMaster) {
+    const numCPUs = os.cpus().length;
+    for (let i = 0; i < numCPUs; i++) {
+        cluster.fork();
+    }
+} else {
+    // Código da aplicação
+    require('./app');
+}</code></pre>
+
+                            <h2>4. Otimizar Queries de Banco de Dados</h2>
+                            <p>Banco de dados é frequentemente o gargalo de performance:</p>
+
+                            <h3>Índices estratégicos</h3>
+                            <p>Crie índices em colunas frequentemente consultadas:</p>
+                            <pre><code>// MongoDB
+db.users.createIndex({ email: 1 });
+
+// PostgreSQL
+CREATE INDEX idx_user_email ON users(email);</code></pre>
+
+                            <h3>Connection Pooling</h3>
+                            <pre><code>const pool = new Pool({
+    max: 20,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 2000,
+});</code></pre>
+
+                            <h3>Evite N+1 Queries</h3>
+                            <pre><code>// ❌ Ruim
+users.forEach(user => {
+    user.profile = await getProfile(user.id);
+});
+
+// ✅ Bom
+const userIds = users.map(u => u.id);
+const profiles = await getProfiles(userIds);
+users.forEach(user => {
+    user.profile = profiles.find(p => p.userId === user.id);
+});</code></pre>
+
+                            <h2>5. Monitoramento e Profiling</h2>
+                            <p>Você não pode otimizar o que não mede. Use ferramentas de monitoramento:</p>
+
+                            <h3>APM Tools</h3>
+                            <ul>
+                                <li>New Relic</li>
+                                <li>Datadog</li>
+                                <li>AppDynamics</li>
+                                <li>PM2 Monitoring</li>
+                            </ul>
+
+                            <h3>Node.js Profiler</h3>
+                            <pre><code>node --prof app.js
+node --prof-process isolate-*.log > processed.txt</code></pre>
+
+                            <h2>Bônus: Dicas Avançadas</h2>
+                            
+                            <h3>Compressão Gzip</h3>
+                            <pre><code>const compression = require('compression');
+app.use(compression());</code></pre>
+
+                            <h3>Lazy Loading de Módulos</h3>
+                            <pre><code>// Carregue módulos pesados apenas quando necessário
+const heavyModule = require('./heavy-module'); // ❌
+const heavyModule = () => require('./heavy-module'); // ✅</code></pre>
+
+                            <h3>Rate Limiting</h3>
+                            <pre><code>const rateLimit = require('express-rate-limit');
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100
+});
+app.use('/api/', limiter);</code></pre>
+
+                            <h2>Medindo Resultados</h2>
+                            <p>Após implementar otimizações, meça:</p>
+                            <ul>
+                                <li>Time to First Byte (TTFB)</li>
+                                <li>Throughput (requests/segundo)</li>
+                                <li>Uso de memória</li>
+                                <li>Uso de CPU</li>
+                                <li>Tempo de resposta de queries</li>
+                            </ul>
+
+                            <blockquote>
+                                <p><strong>Lembre-se:</strong> Otimização prematura é a raiz de todo mal. Meça primeiro, otimize depois, e sempre teste as mudanças.</p>
+                            </blockquote>
+                        </div>
+
+                        <div class="article-tags">
+                            <span class="tags-label">Tags:</span>
+                            <a href="#" class="tag">Node.js</a>
+                            <a href="#" class="tag">Performance</a>
+                            <a href="#" class="tag">Otimização</a>
+                            <a href="#" class="tag">Backend</a>
+                            <a href="#" class="tag">Desenvolvimento</a>
+                        </div>
+
+                        <div class="article-cta">
+                            <h3>Precisa otimizar sua aplicação?</h3>
+                            <p>Nossa equipe especializada pode ajudar você a melhorar a performance do seu sistema Node.js.</p>
+                            <a href="../index.html#contact" class="btn btn-primary">
+                                <i class="fas fa-envelope"></i>
+                                Entre em Contato
+                            </a>
+                            <a href="https://wa.me/+5531997599924" target="_blank" class="btn btn-secondary">
+                                <i class="fab fa-whatsapp"></i>
+                                WhatsApp
+                            </a>
+                        </div>
+
+                        <div class="related-articles">
+                            <h3>Artigos Relacionados</h3>
+                            <div class="related-grid">
+                                <a href="api-security.html" class="related-card">
+                                    <div class="related-card-image">
+                                        <i class="fas fa-shield-alt"></i>
+                                    </div>
+                                    <div class="related-card-content">
+                                        <h4>Segurança em APIs REST: Boas Práticas Essenciais</h4>
+                                        <p>Guia completo sobre segurança em APIs REST.</p>
+                                    </div>
+                                </a>
+                                <a href="react-vs-wordpress.html" class="related-card">
+                                    <div class="related-card-image">
+                                        <i class="fab fa-react"></i>
+                                    </div>
+                                    <div class="related-card-content">
+                                        <h4>React vs. WordPress: Quando o customizado supera o pronto?</h4>
+                                        <p>Descubra quando escolher desenvolvimento customizado.</p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </main>
+
+                    <aside class="article-sidebar">
+                        <div class="sidebar-widget">
+                            <h4>Receba Novos Artigos</h4>
+                            <p>Cadastre-se para receber nossos artigos e tutoriais por email.</p>
+                            <a href="../index.html#contact" class="btn btn-primary btn-block">
+                                <i class="fas fa-envelope"></i>
+                                Cadastrar
+                            </a>
+                        </div>
+
+                        <div class="sidebar-widget">
+                            <h4>Categorias</h4>
+                            <ul class="category-list">
+                                <li><a href="../index.html#articles">Automação</a></li>
+                                <li><a href="../index.html#articles">Desenvolvimento</a></li>
+                                <li><a href="../index.html#articles">Comparações</a></li>
+                                <li><a href="../index.html#articles">Tutoriais</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="sidebar-widget">
+                            <h4>Serviços</h4>
+                            <ul class="services-list">
+                                <li><a href="../index.html#services">Desenvolvimento Web</a></li>
+                                <li><a href="../index.html#services">E-commerce</a></li>
+                                <li><a href="../index.html#services">Sistemas Personalizados</a></li>
+                                <li><a href="../index.html#services">Automação com n8n</a></li>
+                            </ul>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>
+                        <img src="../Icon Over (1).png" alt="Over Tech Logo" class="footer-icon">
+                        Over Tech
+                    </h3>
+                    <p>Sua empresa de desenvolvimento de confiança</p>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Links Rápidos</h4>
+                    <ul>
+                        <li><a href="../index.html#home">Início</a></li>
+                        <li><a href="../index.html#services">Serviços</a></li>
+                        <li><a href="../index.html#articles">Artigos</a></li>
+                        <li><a href="../index.html#about">Sobre</a></li>
+                        <li><a href="../index.html#contact">Contato</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-social">
+                    <h4>Redes Sociais</h4>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="https://www.instagram.com/overtech.br/"><i class="fab fa-instagram"></i></a>
+                        <a href="https://wa.me/+5531997599924"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Over Tech. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+</body>
+</html>
+

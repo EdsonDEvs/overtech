@@ -100,7 +100,7 @@ const observer = new IntersectionObserver((entries) => {
 }, observerOptions);
 
 // Observe elements for animation
-const animatedElements = document.querySelectorAll('.service-card, .contact-item, .stat, .feature, .testimonial-card, .cert-card, .portfolio-item, .web-feature, .tech-item');
+const animatedElements = document.querySelectorAll('.service-card, .contact-item, .stat, .feature, .testimonial-card, .cert-card, .portfolio-item, .web-feature, .tech-item, .article-card');
 animatedElements.forEach(el => {
     el.style.opacity = '0';
     el.style.transform = 'translateY(30px)';
@@ -568,7 +568,7 @@ const staggerObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.1 });
 
 // Apply staggered animation to grid items
-const gridItems = document.querySelectorAll('.testimonials-grid .testimonial-card, .certifications-grid .cert-card, .portfolio-grid .portfolio-item');
+const gridItems = document.querySelectorAll('.testimonials-grid .testimonial-card, .certifications-grid .cert-card, .portfolio-grid .portfolio-item, .articles-grid .article-card');
 gridItems.forEach(item => {
     item.style.opacity = '0';
     item.style.transform = 'translateY(30px)';
@@ -602,6 +602,36 @@ tabButtons.forEach(button => {
                 }, 100);
             } else {
                 item.style.display = 'none';
+            }
+        });
+    });
+});
+
+// Articles filter functionality
+const filterButtons = document.querySelectorAll('.filter-btn');
+const articleCards = document.querySelectorAll('.article-card');
+
+filterButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        // Remove active class from all filter buttons
+        filterButtons.forEach(btn => btn.classList.remove('active'));
+        // Add active class to clicked button
+        button.classList.add('active');
+        
+        const filter = button.getAttribute('data-filter');
+        
+        articleCards.forEach(card => {
+            if (filter === 'all' || card.getAttribute('data-category') === filter) {
+                card.style.display = 'flex';
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100);
+            } else {
+                card.style.display = 'none';
             }
         });
     });

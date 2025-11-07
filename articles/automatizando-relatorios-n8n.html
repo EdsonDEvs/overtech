@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automatizando Relatórios com n8n e Google Sheets - Over Tech</title>
+    <meta name="description" content="Como criar workflows automatizados que geram relatórios em tempo real, sincronizam dados entre sistemas e enviam análises por email sem intervenção manual.">
+    <link rel="icon" type="image/png" sizes="96x96" href="../Icon Over (1).png">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../article-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-brand">
+                <a href="../index.html" style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none;">
+                    <img src="../Icon Over (1).png" alt="Over Tech Logo" class="brand-icon">
+                    <h2>Over Tech</h2>
+                </a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../index.html#home">Início</a></li>
+                <li><a href="../index.html#services">Serviços</a></li>
+                <li><a href="../index.html#automation">Projetos</a></li>
+                <li><a href="../index.html#articles">Artigos</a></li>
+                <li><a href="../index.html#about">Sobre</a></li>
+                <li><a href="../index.html#contact">Contato</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+
+    <nav class="breadcrumb">
+        <div class="container">
+            <a href="../index.html">Início</a>
+            <span>/</span>
+            <a href="../index.html#articles">Artigos</a>
+            <span>/</span>
+            <span class="current">Automação de Relatórios</span>
+        </div>
+    </nav>
+
+    <article class="article-page">
+        <div class="article-header">
+            <div class="container">
+                <div class="article-meta-top">
+                    <span class="article-category-badge">Automação</span>
+                    <span class="article-date-badge">28 Dez 2023</span>
+                    <span class="article-type-badge">
+                        <i class="fas fa-file-alt"></i>
+                        Artigo
+                    </span>
+                </div>
+                <h1 class="article-title">Automatizando Relatórios com n8n e Google Sheets</h1>
+                <p class="article-excerpt">Como criar workflows automatizados que geram relatórios em tempo real, sincronizam dados entre sistemas e enviam análises por email sem intervenção manual.</p>
+                <div class="article-meta-bottom">
+                    <span class="article-read-time">
+                        <i class="far fa-clock"></i>
+                        7 min
+                    </span>
+                    <div class="article-share">
+                        <span>Compartilhar:</span>
+                        <a href="#" class="share-btn"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="share-btn"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="share-btn"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="share-btn"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="article-content-wrapper">
+            <div class="container">
+                <div class="article-layout">
+                    <main class="article-main">
+                        <div class="article-featured-image">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        
+                        <div class="article-body">
+                            <h2>O problema dos relatórios manuais</h2>
+                            <p>Relatórios manuais consomem tempo valioso da equipe, são propensos a erros e não escalam com o crescimento do negócio. A automação com n8n e Google Sheets resolve esses problemas.</p>
+
+                            <h2>Configurando as integrações</h2>
+                            <h3>1. Conectar n8n ao Google Sheets</h3>
+                            <p>Primeiro, você precisa autenticar o n8n com sua conta Google:</p>
+                            <ol>
+                                <li>Vá em Credentials no n8n</li>
+                                <li>Adicione uma nova credencial "Google Sheets OAuth2"</li>
+                                <li>Autorize o acesso às suas planilhas</li>
+                            </ol>
+
+                            <h3>2. Criar planilha de destino</h3>
+                            <p>Crie uma planilha Google Sheets com as colunas necessárias para seus relatórios.</p>
+
+                            <h2>Workflow básico: Relatório diário de vendas</h2>
+                            <p>Vamos criar um workflow que:</p>
+                            <ul>
+                                <li>Busca dados de vendas da API</li>
+                                <li>Processa e agrega os dados</li>
+                                <li>Atualiza a planilha Google Sheets</li>
+                                <li>Envia relatório por email</li>
+                            </ul>
+
+                            <h3>Passo 1: Trigger - Agendar execução diária</h3>
+                            <p>Use o nó "Schedule Trigger" para executar o workflow diariamente às 8h:</p>
+                            <pre><code>Cron: 0 8 * * *</code></pre>
+
+                            <h3>Passo 2: Buscar dados da API</h3>
+                            <p>Use o nó "HTTP Request" para buscar dados da sua API de vendas:</p>
+                            <pre><code>Method: GET
+URL: https://api.exemplo.com/vendas
+Headers: 
+  Authorization: Bearer {{ $env.API_TOKEN }}
+Query Parameters:
+  data: {{ $now.toISO().split('T')[0] }}</code></pre>
+
+                            <h3>Passo 3: Processar dados</h3>
+                            <p>Use o nó "Function" para processar e agregar os dados:</p>
+                            <pre><code>const vendas = $input.all();
+const resumo = {
+    totalVendas: vendas.length,
+    totalValor: vendas.reduce((sum, v) => sum + v.json.valor, 0),
+    mediaTicket: 0,
+    produtosVendidos: vendas.reduce((sum, v) => sum + v.json.quantidade, 0)
+};
+resumo.mediaTicket = resumo.totalValor / resumo.totalVendas;
+
+return [{
+    json: {
+        data: $now.toISO().split('T')[0],
+        ...resumo
+    }
+}];</code></pre>
+
+                            <h3>Passo 4: Atualizar Google Sheets</h3>
+                            <p>Use o nó "Google Sheets" para adicionar uma nova linha:</p>
+                            <pre><code>Operation: Append
+Spreadsheet: Relatório de Vendas
+Sheet: Vendas Diárias
+Columns: Data | Total Vendas | Total Valor | Média Ticket | Produtos Vendidos</code></pre>
+
+                            <h3>Passo 5: Enviar email</h3>
+                            <p>Use o nó "Email" para enviar relatório:</p>
+                            <pre><code>To: equipe@exemplo.com
+Subject: Relatório Diário de Vendas - {{ $now.toLocaleDateString() }}
+Body: |
+    Relatório de Vendas do Dia
+    
+    Total de Vendas: {{ $json.totalVendas }}
+    Valor Total: R$ {{ $json.totalValor.toFixed(2) }}
+    Média Ticket: R$ {{ $json.mediaTicket.toFixed(2) }}
+    Produtos Vendidos: {{ $json.produtosVendidos }}</code></pre>
+
+                            <h2>Workflow avançado: Sincronização em tempo real</h2>
+                            <p>Para sincronização em tempo real, use webhooks:</p>
+
+                            <h3>1. Webhook Trigger</h3>
+                            <p>Configure um webhook para receber dados quando uma venda acontecer.</p>
+
+                            <h3>2. Validação e transformação</h3>
+                            <p>Valide os dados recebidos e transforme para o formato da planilha.</p>
+
+                            <h3>3. Atualização incremental</h3>
+                            <p>Atualize apenas as linhas necessárias na planilha.</p>
+
+                            <h2>Relatórios com gráficos</h2>
+                            <p>Google Sheets pode gerar gráficos automaticamente a partir dos dados:</p>
+                            <ol>
+                                <li>Selecione os dados na planilha</li>
+                                <li>Vá em Inserir > Gráfico</li>
+                                <li>Configure o tipo de gráfico</li>
+                                <li>O gráfico será atualizado automaticamente com novos dados</li>
+                            </ol>
+
+                            <h2>Agregações e análises</h2>
+                            <p>Use fórmulas do Google Sheets para análises avançadas:</p>
+                            <pre><code>=SUMIF(A:A, ">="&TODAY()-7, C:C) // Vendas dos últimos 7 dias
+=AVERAGEIF(B:B, ">1000", C:C) // Média de vendas acima de R$ 1000
+=QUERY(A:C, "SELECT A, SUM(C) GROUP BY A") // Agregação por data</code></pre>
+
+                            <h2>Enviando relatórios por múltiplos canais</h2>
+                            <p>Além de email, você pode enviar relatórios por:</p>
+                            <ul>
+                                <li><strong>Slack:</strong> Notificações em tempo real</li>
+                                <li><strong>WhatsApp:</strong> Via API do WhatsApp Business</li>
+                                <li><strong>Telegram:</strong> Bot do Telegram</li>
+                                <li><strong>PDF:</strong> Gere PDFs e anexe em emails</li>
+                            </ul>
+
+                            <h2>Casos de uso práticos</h2>
+                            
+                            <h3>1. Relatório de estoque</h3>
+                            <p>Monitore níveis de estoque e alerte quando produtos estiverem baixos.</p>
+
+                            <h3>2. Análise de clientes</h3>
+                            <p>Rastreie comportamento de clientes e identifique tendências.</p>
+
+                            <h3>3. Relatório financeiro</h3>
+                            <p>Consolide dados de múltiplas fontes em um relatório único.</p>
+
+                            <h3>4. Métricas de marketing</h3>
+                            <p>Agregue dados de campanhas de múltiplas plataformas.</p>
+
+                            <h2>Dicas de performance</h2>
+                            <ul>
+                                <li>Use batch operations quando possível</li>
+                                <li>Limite a quantidade de dados processados por vez</li>
+                                <li>Cache dados frequentemente acessados</li>
+                                <li>Use fórmulas do Sheets para cálculos pesados</li>
+                            </ul>
+
+                            <h2>Tratamento de erros</h2>
+                            <p>Sempre implemente tratamento de erros robusto:</p>
+                            <ul>
+                                <li>Try-catch em funções JavaScript</li>
+                                <li>Retry logic para APIs externas</li>
+                                <li>Notificações de falhas</li>
+                                <li>Logs detalhados</li>
+                            </ul>
+
+                            <blockquote>
+                                <p><strong>Dica profissional:</strong> Comece com relatórios simples e vá adicionando complexidade. Teste cada etapa antes de automatizar completamente.</p>
+                            </blockquote>
+                        </div>
+
+                        <div class="article-tags">
+                            <span class="tags-label">Tags:</span>
+                            <a href="#" class="tag">n8n</a>
+                            <a href="#" class="tag">Google Sheets</a>
+                            <a href="#" class="tag">Automação</a>
+                            <a href="#" class="tag">Relatórios</a>
+                            <a href="#" class="tag">Workflow</a>
+                        </div>
+
+                        <div class="article-cta">
+                            <h3>Precisa automatizar seus relatórios?</h3>
+                            <p>Nossa equipe pode criar workflows personalizados para automatizar seus processos de relatórios.</p>
+                            <a href="../index.html#contact" class="btn btn-primary">
+                                <i class="fas fa-envelope"></i>
+                                Entre em Contato
+                            </a>
+                            <a href="https://wa.me/+5531997599924" target="_blank" class="btn btn-secondary">
+                                <i class="fab fa-whatsapp"></i>
+                                WhatsApp
+                            </a>
+                        </div>
+
+                        <div class="related-articles">
+                            <h3>Artigos Relacionados</h3>
+                            <div class="related-grid">
+                                <a href="n8n-automation-onboarding.html" class="related-card">
+                                    <div class="related-card-image">
+                                        <i class="fas fa-robot"></i>
+                                    </div>
+                                    <div class="related-card-content">
+                                        <h4>Como usar n8n para automatizar o onboarding de clientes</h4>
+                                        <p>Aprenda a criar workflows inteligentes com n8n.</p>
+                                    </div>
+                                </a>
+                                <a href="pix-ecommerce-integration.html" class="related-card">
+                                    <div class="related-card-image">
+                                        <i class="fas fa-shopping-cart"></i>
+                                    </div>
+                                    <div class="related-card-content">
+                                        <h4>Como Integrar Pagamento PIX em seu E-commerce</h4>
+                                        <p>Tutorial completo de integração PIX.</p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </main>
+
+                    <aside class="article-sidebar">
+                        <div class="sidebar-widget">
+                            <h4>Receba Novos Artigos</h4>
+                            <p>Cadastre-se para receber nossos artigos e tutoriais por email.</p>
+                            <a href="../index.html#contact" class="btn btn-primary btn-block">
+                                <i class="fas fa-envelope"></i>
+                                Cadastrar
+                            </a>
+                        </div>
+
+                        <div class="sidebar-widget">
+                            <h4>Categorias</h4>
+                            <ul class="category-list">
+                                <li><a href="../index.html#articles">Automação</a></li>
+                                <li><a href="../index.html#articles">Desenvolvimento</a></li>
+                                <li><a href="../index.html#articles">Comparações</a></li>
+                                <li><a href="../index.html#articles">Tutoriais</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="sidebar-widget">
+                            <h4>Serviços</h4>
+                            <ul class="services-list">
+                                <li><a href="../index.html#services">Desenvolvimento Web</a></li>
+                                <li><a href="../index.html#services">E-commerce</a></li>
+                                <li><a href="../index.html#services">Sistemas Personalizados</a></li>
+                                <li><a href="../index.html#services">Automação com n8n</a></li>
+                            </ul>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>
+                        <img src="../Icon Over (1).png" alt="Over Tech Logo" class="footer-icon">
+                        Over Tech
+                    </h3>
+                    <p>Sua empresa de desenvolvimento de confiança</p>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Links Rápidos</h4>
+                    <ul>
+                        <li><a href="../index.html#home">Início</a></li>
+                        <li><a href="../index.html#services">Serviços</a></li>
+                        <li><a href="../index.html#articles">Artigos</a></li>
+                        <li><a href="../index.html#about">Sobre</a></li>
+                        <li><a href="../index.html#contact">Contato</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-social">
+                    <h4>Redes Sociais</h4>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="https://www.instagram.com/overtech.br/"><i class="fab fa-instagram"></i></a>
+                        <a href="https://wa.me/+5531997599924"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Over Tech. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+</body>
+</html>
+
